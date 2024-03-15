@@ -262,7 +262,7 @@ async function downloadAllAttachments(attachments) {
                 continue;
             }
             var downloadURL = `${attachments[key].Url}?${config.FILE_STORAGE_DOWNLOAD_KEY}`;
-            console.log("downloadURL", downloadURL);
+            
             const response = await axios.get(downloadURL, { responseType: 'arraybuffer' });
             const buffer = Buffer.from(response.data, "utf-8").toString("base64");
             newAttachments.push({ "Name": `${attachments[key].Name}`, "Data": buffer });
