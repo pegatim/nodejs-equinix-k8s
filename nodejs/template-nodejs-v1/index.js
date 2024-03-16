@@ -1,6 +1,11 @@
 'use strict'
 var express = require("express");
-require('dotenv').config();
+
+var path = require('path');
+var dotEnvPath = path.resolve('./.env');
+
+require('dotenv').config({ path: dotEnvPath});
+
 const workVisitTemplate = require('./EquinixWorkVisitTemplate')
 const smartHandsTemplate = require('./EquinixSmartHandsTemplate')
 const troubleTicketTemplate = require('./EquinixTroubleTicketTemplate')
@@ -16,8 +21,6 @@ const NOTIFICATION_PENDING_CUSTOMER_INPUT = "Pending Customer Input";
 const NOTIFICATION_OPEN = "Open";
 const NOTIFICATION_INPROGRESS = "InProgress";
 const NOTIFICATION_CANCELLED = "Cancelled";
-
-console.log(ORDER_NUMBER);
 
 const CREATE_WORKVISIT_PAYLOAD = {
     "CustomerContact": "<CUSTOMER_CONTACT>",
@@ -309,163 +312,195 @@ const CANCEL_SHIPMENT_PAYLOAD = {
 }
 const bodyParser = require('body-parser');
 
+const winston = require("winston");
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(
+      (info) => `${info.timestamp} ${info.level}: ${info.message}`
+    )
+  ),
+  transports: [
+    new winston.transports.Console(),
+  ],
+});
+
 const app = express();
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json({limit: '50mb'}));
 app.use(bodyParser.raw());
 
+// log each request
+app.use((req, res, next) => {
+        logger.info(`Received a ${req.method} request for ${req.url}`);
+	next();
+});
+
+// log error message
+app.use((err, req, res, next) => {
+        logger.error(err.message);
+        res.status(500).send();
+});
+
+// support healthcheck
+app.get("/ping", (req, res, next) => {
+        res.json({ value: "pong" });
+})
 
 app.post("/create_work_visit", async (req, res, next) => {
-	console.log("\n\nSending Create WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Create WorkVisit Request Message  **********")
 	console.log (req.body)
-	    console.log(req.param("ClientID"))
-	    console.log(req.param("ClientSecretKey"))
+	    // logger.log("info", req.param("ClientID"))
+	    // logger.log("info", req.param("ClientSecretKey"))
         const result = await workVisitTemplate.createWorkVisit(
             JSON.stringify(req.body),
             req.param("ClientID"),
             req.param("ClientSecretKey")
 	);
-    console.log("\n\nReceiving Create WorkVisit Response Message  **********\n\n", safeStringify(result))
+       logger.log("info", "Receiving Create WorkVisit Response Message  **********", safeStringify(result))
        res.json(result);
 });
 
 app.post("/update_work_visit", async (req, res, next) => {
-	console.log("\n\nSending Update WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Update WorkVisit Request Message  **********")
 	console.log (req.body)
-	console.log(req.param("ClientID"))
-	console.log(req.param("ClientSecretKey"))
+	// logger.log("info", req.param("ClientID"))
+	// logger.log("info", req.param("ClientSecretKey"))
         const result = await workVisitTemplate.updateWorkVisit(
             JSON.stringify(req.body),
             req.param("ClientID"),
             req.param("ClientSecretKey")
         );
-        console.log("\n\nReceiving Update WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Update WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/cancel_work_visit", async (req, res, next) => {
-	console.log("\n\nSending Update WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Update WorkVisit Request Message  **********")
         const result = await workVisitTemplate.cancelWorkVisit(
             JSON.stringify(req.body),
             CLIENT_ID,
             CLIENT_SECRET
         )
-        console.log("\n\nReceiving Update WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Update WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 
 app.post("/create_work_visitExtn", async (req, res, next) => {
-	console.log("\n\nSending Create WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Create WorkVisit Request Message  **********")
         const result = await workVisitTemplate.createWorkVisitExtn(
             JSON.stringify(req.body),
             CLIENT_ID,
             CLIENT_SECRET
         );
-    console.log("\n\nReceiving Create WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Create WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/update_work_visitExtn", async (req, res, next) => {
-	console.log("\n\nSending Update WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Update WorkVisit Request Message  **********")
         const result = await workVisitTemplate.updateWorkVisitExtn(
             JSON.stringify(req.body),
             CLIENT_ID,
             CLIENT_SECRET
         )
-        console.log("\n\nReceiving Update WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Update WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/cancel_work_visitExtn", async (req, res, next) => {
-	console.log("\n\nSending Update WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Update WorkVisit Request Message  **********")
         const result = await workVisitTemplate.cancelWorkVisitExtn(
             JSON.stringify(req.body),
             CLIENT_ID,
             CLIENT_SECRET
         )
-        console.log("\n\nReceiving Update WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Update WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/create_smarthandv1", async (req, res, next) => {
-	console.log("\n\nSending Create WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Create WorkVisit Request Message  **********")
         const result = await smartHandsTemplate.createSmartHands(
             JSON.stringify(req.body),
             CLIENT_ID,
             CLIENT_SECRET
         );
-    console.log("\n\nReceiving Create WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Create WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/create_smarthand", async (req, res, next) => {
-	console.log("\n\nSending Create WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Create WorkVisit Request Message  **********")
         const result = await smartHandsTemplate.createSmartHands(
             JSON.stringify(req.body),
             req.param("ClientID"),
             req.param("ClientSecretKey")
         );
-    console.log("\n\nReceiving Create WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Create WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/update_work_visit", async (req, res, next) => {
-	console.log("\n\nSending Update WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Update WorkVisit Request Message  **********")
         const result = await workVisitTemplate.updateWorkVisit(
             JSON.stringify(req.body),
             CLIENT_ID,
             CLIENT_SECRET
         )
-        console.log("\n\nReceiving Update WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Update WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/cancel_work_visit", async (req, res, next) => {
-	console.log("\n\nSending Update WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Update WorkVisit Request Message  **********")
         const result = await workVisitTemplate.cancelWorkVisit(
             JSON.stringify(req.body),
             CLIENT_ID,
             CLIENT_SECRET
         )
-        console.log("\n\nReceiving Update WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Update WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/update_smarthand", async (req, res, next) => {
-	console.log("\n\nSending Update WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Update WorkVisit Request Message  **********")
 	console.log (req.body)
-	console.log(req.param("ClientID"))
-	console.log(req.param("ClientSecretKey"))
+	// logger.log("info", req.param("ClientID"))
+	// logger.log("info", req.param("ClientSecretKey"))
         const result = await smartHandsTemplate.updateSmartHands(
             JSON.stringify(req.body),
             req.param("ClientID"),
             req.param("ClientSecretKey")
         );
-    console.log("\n\nReceiving Update WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Update WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
 
 app.post("/cancel_smarthand", async (req, res, next) => {
-	console.log("\n\nSending Create WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Create WorkVisit Request Message  **********")
         const result = await smartHandsTemplate.cancelSmartHands(
             JSON.stringify(req.body),
             CLIENT_ID,
             CLIENT_SECRET
         );
-    console.log("\n\nReceiving Create WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Create WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
+
 app.post("/create_crossconnect", async (req, res, next) => {
-	console.log("\n\nSending Create WorkVisit Request Message  **********\n\n")
+	logger.log("info", "Sending Create WorkVisit Request Message  **********")
         const result = await crossConnectTemplate.createCrossConnect(
             JSON.stringify(req.body),
             req.param("ClientID"),
             req.param("ClientSecretKey")
         );
-    console.log("\n\nReceiving Create WorkVisit Response Message  **********\n\n", safeStringify(result))
-       res.json(result);
+        logger.log("info", "Receiving Create WorkVisit Response Message  **********", safeStringify(result))
+        res.json(result);
 });
+
 app.listen(3000, () => {
- console.log("Server running on port 3000");
+        logger.log("info", "Server running on port 3000");
 });

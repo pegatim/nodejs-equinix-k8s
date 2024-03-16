@@ -1,7 +1,12 @@
 /** EQUINIX MESSAGING GATEWAY TEST CLIENT **/
 
 'use strict'
-require('dotenv').config();
+
+var path = require('path');
+var dotEnvPath = path.resolve('./../.env');
+
+require('dotenv').config({ path: dotEnvPath});
+
 const workVisitTemplate = require('../EquinixWorkVisitTemplate')
 const smartHandsTemplate = require('../EquinixSmartHandsTemplate')
 const troubleTicketTemplate = require('../EquinixTroubleTicketTemplate')

@@ -13,11 +13,14 @@
     "@azure/storage-blob": "^12.5.0",
     "axios": "^0.21.1",
     "chai": "^4.2.0",
+    "dotenv": "^16.4.5",
     "express": "^4.17.1",
     "fast-safe-stringify": "^2.0.6",
     "forever-monitor": "^3.0.1",
     "http-status-codes": "^2.1.2",
     "mocha": "^6.0.2",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "winston": "^3.12.0"
   }
 }
+
