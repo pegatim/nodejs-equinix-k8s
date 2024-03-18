@@ -3,7 +3,7 @@
 'use strict'
 
 var path = require('path');
-var dotEnvPath = path.resolve('./../.env');
+var dotEnvPath = path.resolve('./config/.env');
 
 require('dotenv').config({ path: dotEnvPath});
 

@@ -2,7 +2,7 @@
 var express = require("express");
 
 var path = require('path');
-var dotEnvPath = path.resolve('./.env');
+var dotEnvPath = path.resolve('./config/.env');
 
 require('dotenv').config({ path: dotEnvPath});
 
@@ -350,7 +350,7 @@ app.get("/ping", (req, res, next) => {
 
 app.post("/create_work_visit", async (req, res, next) => {
 	logger.log("info", "Sending Create WorkVisit Request Message  **********")
-	console.log (req.body)
+	logger.log("info", req.body)
 	    // logger.log("info", req.param("ClientID"))
 	    // logger.log("info", req.param("ClientSecretKey"))
         const result = await workVisitTemplate.createWorkVisit(
@@ -364,7 +364,7 @@ app.post("/create_work_visit", async (req, res, next) => {
 
 app.post("/update_work_visit", async (req, res, next) => {
 	logger.log("info", "Sending Update WorkVisit Request Message  **********")
-	console.log (req.body)
+	logger.log("info", req.body)
 	// logger.log("info", req.param("ClientID"))
 	// logger.log("info", req.param("ClientSecretKey"))
         const result = await workVisitTemplate.updateWorkVisit(
@@ -467,7 +467,7 @@ app.post("/cancel_work_visit", async (req, res, next) => {
 
 app.post("/update_smarthand", async (req, res, next) => {
 	logger.log("info", "Sending Update WorkVisit Request Message  **********")
-	console.log (req.body)
+	logger.log("info", req.body)
 	// logger.log("info", req.param("ClientID"))
 	// logger.log("info", req.param("ClientSecretKey"))
         const result = await smartHandsTemplate.updateSmartHands(
