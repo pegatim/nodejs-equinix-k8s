@@ -350,13 +350,13 @@ app.get("/ping", (req, res, next) => {
 
 app.post("/create_work_visit", async (req, res, next) => {
 	logger.log("info", "Sending Create WorkVisit Request Message  **********")
-	logger.log("info", req.body)
+	// console.log (req.body)
 	    // logger.log("info", req.param("ClientID"))
 	    // logger.log("info", req.param("ClientSecretKey"))
         const result = await workVisitTemplate.createWorkVisit(
             JSON.stringify(req.body),
-            req.param("ClientID"),
-            req.param("ClientSecretKey")
+            CLIENT_ID,
+            CLIENT_SECRET
 	);
        logger.log("info", "Receiving Create WorkVisit Response Message  **********", safeStringify(result))
        res.json(result);
@@ -364,13 +364,13 @@ app.post("/create_work_visit", async (req, res, next) => {
 
 app.post("/update_work_visit", async (req, res, next) => {
 	logger.log("info", "Sending Update WorkVisit Request Message  **********")
-	logger.log("info", req.body)
+	// console.log (req.body)
 	// logger.log("info", req.param("ClientID"))
 	// logger.log("info", req.param("ClientSecretKey"))
         const result = await workVisitTemplate.updateWorkVisit(
             JSON.stringify(req.body),
-            req.param("ClientID"),
-            req.param("ClientSecretKey")
+            CLIENT_ID,
+            CLIENT_SECRET
         );
         logger.log("info", "Receiving Update WorkVisit Response Message  **********", safeStringify(result))
         res.json(result);
@@ -467,7 +467,7 @@ app.post("/cancel_work_visit", async (req, res, next) => {
 
 app.post("/update_smarthand", async (req, res, next) => {
 	logger.log("info", "Sending Update WorkVisit Request Message  **********")
-	logger.log("info", req.body)
+	//  console.log (req.body)
 	// logger.log("info", req.param("ClientID"))
 	// logger.log("info", req.param("ClientSecretKey"))
         const result = await smartHandsTemplate.updateSmartHands(
@@ -494,8 +494,8 @@ app.post("/create_crossconnect", async (req, res, next) => {
 	logger.log("info", "Sending Create WorkVisit Request Message  **********")
         const result = await crossConnectTemplate.createCrossConnect(
             JSON.stringify(req.body),
-            req.param("ClientID"),
-            req.param("ClientSecretKey")
+            CLIENT_ID,
+            CLIENT_SECRET
         );
         logger.log("info", "Receiving Create WorkVisit Response Message  **********", safeStringify(result))
         res.json(result);
